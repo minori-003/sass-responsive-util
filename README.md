@@ -1,11 +1,15 @@
-# sass-responsive-util
+# 🧩 sass-responsive-util
+
 [![npm version](https://img.shields.io/npm/v/sass-responsive-util.svg)](https://www.npmjs.com/package/sass-responsive-util)
 [![license](https://img.shields.io/github/license/minori-003/sass-responsive-util)](./LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/minori-003/sass-responsive-util)](https://github.com/minori-003/sass-responsive-util)
+[![SassDoc](https://img.shields.io/badge/docs-SassDoc-ff69b4.svg)](https://github.com/minori-003/sass-responsive-util)
 
-> A modern Sass utility library for responsive web design, supporting px, pt, rem, vw, and clamp() conversions.
-
-レスポンシブWebデザインとデザインシステム構築を強力にサポートする、モダンなSassモジュール群です。`px`, `pt`単位の値を、`rem`, `vw`, `em`, `clamp()`といったレスポンシブ対応のCSS単位へ簡単に変換できます。
+> A modern Sass utility library for responsive web design, supporting `px`, `pt`, `rem`, `vw`, and `clamp()` conversions with DPI-aware scaling.  
+>
+> レスポンシブWebデザインとデザインシステム構築を強力にサポートする、モダンなSassモジュール群です。  
+> `px`, `pt`単位の値を、`rem`, `vw`, `em`, `clamp()`などのレスポンシブ対応CSS単位へ簡単に変換できます。  
+> また、**DPIに応じたpt変換**（**印刷・デザインツール対応**）もサポートしています。
 
 ## ✨ 特徴
 
@@ -14,7 +18,9 @@
 - **Fluid Type/Spacingの実現:** CSSの`clamp()`関数を`rem`基準で簡単に生成できる`r-clamp()`を提供。
 - **VW変換:** PC/SPそれぞれの基準ビューポート幅を元にした`vw`変換関数を提供。
 
-## 📥 インストールとセットアップ
+> ⚠️ **注意事項**: LibSass / Node Sass は非対応です。
+
+## 📦 Installation
 
 ### 📦 インストール
 
@@ -27,9 +33,6 @@ npm install sass-responsive-util
 ```bash
 git clone https://github.com/minori-003/sass-responsive-util.git
 ```
-
-
-
 
 ## 📂 ファイル構成
 <pre>
@@ -53,7 +56,7 @@ sass-responsive-util/
             └── _fluid-type.scss // Fluid Typography
 </pre>
 
-## 使用方法 (Usage)
+## 📘 Usage / 使用方法
 
 プロジェクトのSCSSファイル内で、`_index.scss`を`@use`ディレクティブでインポートしてください。
 
@@ -86,7 +89,7 @@ sass-responsive-util/
 
 ### 💡 サンプルコード
 
-| 関数 | 目的 | SCSS例 |　CSS出力例 |
+| 関数 | 目的 | SCSS例 | CSS出力例 |
 | --- | --- | --- | --- |
 | `px-to-rem()` | `px`を`rem`に変換 | `font-size: px-to-rem(24);` | `font-size: 1.5rem;` |
 | `r-clamp()` | `px`に基づき`clamp()`を生成 | `font-size: r-clamp(16, 32);` | `font-size: clamp(1rem, calc(0.85rem + 0.52vw), 2rem);` |

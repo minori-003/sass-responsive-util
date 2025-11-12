@@ -59,7 +59,7 @@
 /// `$root-font-size` を基準にptがremに自動換算されます。
 ///
 /// @example scss - 例
-///   r-clamp-rem(10pt, 20pt);
+///   r-clamp-pt(10pt, 20pt);
 ///   // => clamp(0.8333333333rem, calc(...), 1.6666666667rem)
 ///
 /// ptに対応した対象のサイズが画面幅に応じて変化するCSSのclamp()関数を生成します。

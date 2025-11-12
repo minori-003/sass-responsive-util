@@ -6,6 +6,7 @@
 /// - pt値にも対応しており、CanvaやIllustratorなどの異なるDPI環境でも正確な変換が可能です。
 
 @use "sass:math";
+@use "sass:meta";
 @use "../setting" as var;
 @use "unit-helpers" as uh;
 @use "pt-conversions" as pt;
@@ -22,7 +23,7 @@
 /// @access private
 @function _to-px-value($value) {
   // 単位が 'pt' の場合は、pt-to-px-value関数で変換
-  @if unit($value) == "pt" {
+  @if math.unit($value) == "pt" {
     @return pt.pt-to-px-value($value);
   }
   // それ以外（pxや単位なし）の場合は、remove-unitで単位を除去

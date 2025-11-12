@@ -1,9 +1,8 @@
 {
   "name": "sass-responsive-util",
   "version": "1.0.0",
-  "description": "DPI対応のpt変換とr-clampを組み合わせたSassユーティリティ関数集。px, pt, em, %, vw, remに対応しています。「Sass utility library for DPI-based responsive scaling」",
+  "description": "A Sass utility library for DPI-based responsive scaling. Supports px, pt, rem, em, %, and clamp().",
   "main": "scss/_index.scss",
-  "style": "scss/_index.scss",
   "sass": "scss/_index.scss",
   "exports": {
     ".": "./sass-responsive-util/_index.scss",
