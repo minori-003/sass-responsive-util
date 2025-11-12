@@ -1,0 +1,89 @@
+/// @file _local-conversions.scss
+/// @group Conversions
+/// @description
+/// px / pt → em / % に変換するためのSass関数群。
+/// - DPIは `$default-dpi`（_variables.scss）で統一管理。
+/// - pt値にも対応しており、CanvaやIllustratorなどの異なるDPI環境でも正確な変換が可能です。
+
+@use "sass:math";
+@use "../setting" as var;
+@use "unit-helpers" as uh;
+@use "pt-conversions" as pt;
+
+// ===================================================================
+// Internal Helper
+// ===================================================================
+
+/// 任意の値を単位なしのpx値に変換する内部ヘルパー関数。
+/// pt単位は自動的にpx換算されます。
+/// @access private
+/// @param {Number} $value - 変換対象の値（px, pt, または単位なし）
+/// @return {Number} 単位なしpx値
+/// @access private
+@function _to-px-value($value) {
+  // 単位が 'pt' の場合は、pt-to-px-value関数で変換
+  @if unit($value) == "pt" {
+    @return pt.pt-to-px-value($value);
+  }
+  // それ以外（pxや単位なし）の場合は、remove-unitで単位を除去
+  @return uh.remove-unit($value);
+}
+
+// ===================================================================
+// em変換
+// ===================================================================
+
+/// ターゲットサイズを、コンテキスト（親要素）のフォントサイズに基づいてem単位に変換します。
+/// ptを使用する場合は、単位(pt)をつけてください。
+/// 単位がない若しくは単位がpx場合は、pxとして処理します。
+///
+/// @example scss - 例
+///   to-em(16px, 20px) // => 0.8em
+///   to-em(12pt, 16pt) // => 0.75em
+///
+/// @param {Number} $target-size - 変換したいターゲットのサイズ (例: 16px, 12pt)
+/// @param {Number} $context-size - 基準となる親要素のフォントサイズ (例: 20px, 16pt)
+/// @return {Number} em単位の値
+@function to-em($target-size, $context-size) {
+  // ヘルパー関数を使って、両方の引数を単位なしのpx値に変換
+  $target-px: _to-px-value($target-size);
+  $context-px: _to-px-value($context-size);
+
+  // ゼロ除算を防止する安全装置
+  @if $context-px == 0 {
+    @warn "Context font size cannot be 0 for em conversion.";
+    @return 0em;
+  }
+
+  @return math.div($target-px, $context-px) * 1em;
+}
+
+// ===================================================================
+// Percent変換
+// ===================================================================
+
+
+/// ターゲットサイズを、コンテキスト（親要素）のサイズに基づいて%単位に変換します。
+/// ptを使用する場合は、単位(pt)をつけてください。
+/// 単位がない若しくは単位がpx場合は、pxとして処理します。
+///
+/// @example scss - 例
+///   to-percent(16px, 20px) // => 80%
+///   to-percent(12pt, 16pt) // => 75%
+///
+/// @param {Number} $target-size - 変換したいターゲットのサイズ (例: 16px, 12pt)
+/// @param {Number} $context-size - 基準となる親要素のサイズ (例: 20px, 16pt)
+/// @return {Number} %単位の値
+@function to-percent($target-size, $context-size){
+	// ヘルパー関数を使って、両方の引数を単位なしのpx値に変換
+	$target-px: _to-px-value($target-size);
+  $context-px: _to-px-value($context-size);
+
+  // ゼロ除算を防止する安全装置
+  @if $context-px == 0 {
+    @warn "Context font size cannot be 0 for % conversion.";
+    @return 0%;
+  }
+
+  @return math.div($target-px, $context-px) * 100%;
+}

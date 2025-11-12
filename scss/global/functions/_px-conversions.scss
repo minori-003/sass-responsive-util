@@ -1,0 +1,25 @@
+/// @ _px-conversions.scss
+/// @group Conversions
+/// @description
+/// px → rem に関する変換関数群
+/// 対応font-sizeは $root-font-size（_variables.scss）で管理。
+
+@use "sass:math";
+@use "../setting" as var;
+@use "unit-helpers" as uh;
+
+// ピクセル変換関連
+
+/// pxをremに変換する関数
+/// @param {number} $px - ピクセル値
+/// @param {number} $baseFontSize - 基準フォントサイズ（デフォルト$root-font-size）
+/// @return {number} rem単位の値
+///   px-to-rem(24px); // => 1.5rem（$root-font-sizeが16pxの場合）
+///
+@function px-to-rem($px, $baseFontSize: var.$root-font-size){
+	// 入力された数値に単位(px)が付いていた場合でも、remove-unit関数で安全に処理する
+	$px: uh.remove-unit($px);
+	$baseFontSize: uh.remove-unit($baseFontSize);
+	$rem: math.div($px, $baseFontSize);
+  @return $rem * 1rem;
+}

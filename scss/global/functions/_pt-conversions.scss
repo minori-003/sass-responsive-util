@@ -1,0 +1,65 @@
+/// @file _pt-conversions.scss
+/// @group Conversions
+/// @description
+/// pt → px / rem に関する変換関数群。
+/// 対応dpiは `$default-dpi`（_variables.scss）で管理。
+/// 対応font-sizeは `$root-font-size`（_variables.scss）で管理。
+
+@use "sass:math";
+@use "../setting" as var;
+@use "unit-helpers" as uh;
+
+/// ptをpxに変換する際のレートを求める関数。
+/// @param {number} $dpi - dpi値
+/// @return {number} - 変換レート
+/// @example scss
+///   pt-to-px-rate(96); // => 1.3333
+///
+@function pt-to-px-rate($dpi: var.$default-dpi) {
+	$dpi: uh.remove-unit($dpi);
+  @return math.div($dpi, 72); // 1pt = dpi/72 px
+}
+
+
+/// ポイント(pt)を単位なしのピクセル(px)値に変換する関数。
+/// 1pt = 96/72px = 4/3px (96dpiの場合)
+/// Canvaでは1pt = 1/72in ≒ 1.3333px (96dpi基準)
+/// Figmaはpx基準、Illustratorは印刷用（72dpi or 300dpi）基準で異なる場合あり
+/// → 実データ確認後に換算レートを調整すること
+/// 換算レートを一括で調整する場合は、_variables.scssの$default-dpiの値を変更してください。
+/// @param {number} $pt - pt値
+/// @return {number} - pt値をpx値に変換した際の純粋な数値(単位なし)
+/// @example scss
+///   pt-to-px-value(12pt); // => 16
+///
+@function pt-to-px-value($pt){
+	// 入力された数値に単位(pt)が付いていた場合でも、remove-unit関数で安全に処理する
+	$pt: uh.remove-unit($pt);
+  @return $pt * pt-to-px-rate();
+}
+
+
+/// ポイント(pt)をpx単位の値に変換します。
+/// @param {number} $pt - pt値
+/// @return {number} - pt値をpxに変換(単位あり)
+/// @example scss
+///   pt-to-px(12pt); // => 16px
+///
+@function pt-to-px($pt){
+  @return pt-to-px-value($pt) * 1px;
+}
+
+/// ポイント(pt)をrem単位の値に変換します。
+/// @param {number} $pt - pt値
+/// @param {number} $baseFontSize - 基準フォントサイズ(デフォルト：$root-font-size)
+/// @return {number} - pt値をremに変換
+/// @example scss
+///   pt-to-rem(12pt); // => 1rem（$root-font-sizeが16pxの場合）
+///
+@function pt-to-rem($pt, $baseFontSize: var.$root-font-size){
+  $px: pt-to-px-value($pt);
+  // 入力された数値に単位(px)が付いていた場合でも、remove-unit関数で安全に処理する
+	$baseFontSize: uh.remove-unit($baseFontSize);
+  $rem: math.div($px, $baseFontSize);
+  @return $rem * 1rem;
+}

@@ -1,0 +1,111 @@
+/// @file _viewport-conversions.scss
+/// @group Conversions
+/// @description
+/// px / pt → vw-pc / vw-sp に関する変換関数群。
+/// - ディスプレイ幅に応じたレスポンシブなvw値を算出。
+/// - 対応ディスプレイサイズは `$default-min-bp` と `$default-max-bp`（_variables.scss）で管理。
+/// - pt変換では `$default-dpi` に基づいてpx換算を行う。
+///
+/// @require variables
+/// @require remove-unit
+/// @require pt-conversions
+///
+/// @example scss - 使用例
+///   // スマホ画面(375px基準)で 20px をvw変換
+///   .text-sp {
+///     font-size: px-to-vw-sp(20);
+///   }
+///
+///   // PC画面(1440px基準)で 32px をvw変換
+///   .text-pc {
+///     font-size: px-to-vw-pc(32);
+///   }
+///
+///   // Canvaデザイン（pt単位）をvwに変換
+///   .title {
+///     font-size: pt-to-vw-sp(12pt);
+///   }
+
+@use "sass:math";
+@use "../setting" as var;
+@use "unit-helpers" as uh;
+@use "pt-conversions" as pt;
+
+
+// ==========================================================================
+// 内部関数
+// ==========================================================================
+
+/// 任意のpx値をvw単位に変換する内部ヘルパー関数。
+/// @access private
+/// @param {number} $px - ピクセル値
+/// @param {number} $viewport - ビューポート幅
+/// @return {number} - vw単位の値
+/// @example scss
+///   _px-to-vw(20, 375); // => 5.3333vw
+///
+@function _px-to-vw($px, $viewport) {
+  @return math.div(uh.remove-unit($px), uh.remove-unit($viewport)) * 100vw;
+}
+
+// ==========================================================================
+// 公開関数（px → vw）
+// ==========================================================================
+
+/// px値をスマホサイズ用のvw単位に変換します。
+/// @param {number} $px - ピクセル値
+/// @param {number} $minViewport - 基準となる最小ビューポート幅（デフォルト：$default-min-bp）
+/// @return {number} - vw単位の値（sp用）
+/// @example scss
+///   px-to-vw-sp(20); // => 5.3333vw（375px基準）
+///
+@function px-to-vw-sp($px, $minViewport: var.$default-min-bp) {
+  @return _px-to-vw($px, $minViewport);
+  }
+
+/// px値をPCサイズ用のvw単位に変換します。
+/// px値が負の場合は `max()` を、正の場合は `min()` を使用して安全に返却します。
+/// @param {number} $px - ピクセル値
+/// @param {number} $maxViewport - 基準となる最大ビューポート幅（デフォルト：$default-max-bp）
+/// @return {number} - vw単位の値（pc用）
+/// @example scss
+///   px-to-vw-pc(32); // => 2.2222vw（1440px基準）
+///
+@function px-to-vw-pc($px, $maxViewport: var.$default-max-bp) {
+	// 入力された数値に単位(px)が付いていた場合でも、remove-unit関数で安全に処理する
+	$px: uh.remove-unit($px);
+  @if $px < 0 {
+    @return max($px * 1px, _px-to-vw($px, $maxViewport));
+  } @else {
+    @return min($px * 1px, _px-to-vw($px, $maxViewport));
+  }
+}
+
+// ==========================================================================
+// 公開関数（pt → vw）
+// ==========================================================================
+
+/// pt値をスマホサイズ用のvw単位に変換します。
+/// @param {number} $pt - pt値
+/// @param {number} $minViewport - 基準となる最小ビューポート幅（デフォルト：$default-min-bp）
+/// @return {number} - vw単位の値（sp用）
+/// @example scss
+///   pt-to-vw-sp(12pt); // => 4.2666vw（375px基準）
+///
+@function pt-to-vw-sp($pt, $minViewport: var.$default-min-bp) {
+	$px: pt.pt-to-px-value($pt); // pt値をpx値に変換する
+  @return _px-to-vw($px, $minViewport);
+}
+
+/// pt値をPCサイズ用のvw単位に変換します。
+/// px値が負の場合は `max()` を、正の場合は `min()` を使用して安全に返却します。
+/// @param {number} $pt - pt値
+/// @param {number} $maxViewport - 基準となる最大ビューポート幅（デフォルト：$default-max-bp）
+/// @return {number} - vw単位の値（pc用）
+/// @example scss
+///   pt-to-vw-pc(16pt); // => 1.777vw（1440px基準）
+///
+@function pt-to-vw-pc($pt, $maxViewport: var.$default-max-bp) {
+  $px: pt.pt-to-px-value($pt); // pt → px に変換
+  @return px-to-vw-pc($px, $maxViewport); // 既存のpx-to-vw-pc関数を呼び出す
+}

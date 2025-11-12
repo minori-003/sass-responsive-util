@@ -1,0 +1,39 @@
+/// @file _variables.scss
+/// @group Config
+/// @description
+/// ライブラリ全体で使用する基準値を定義。
+/// 各関数がこれらの変数を参照して動作します。
+
+// 一連のファイルを全てまとめる場合は必要 (他のファイルでmathを使用するため)
+// @use "sass:math";
+
+/// ディスプレイ最小幅 (px)
+/// @type Number
+$default-min-bp: 375;
+
+/// ディスプレイ最大幅 (px)
+/// @type Number
+$default-max-bp: 1440;
+
+/// 基準font-size (px)
+/// @type Number
+$root-font-size: 16;
+
+// ↓ ここから個別変数の説明
+// ポイントからピクセルに変換する際の基準値はここで調整する
+// 1pt = 96/72px = 4/3px (96dpiの場合)
+// Canvaでは 1pt = 1/72in ≒ 1.3333px (96dpi基準)
+// Figmaは px 基準、Illustratorは印刷用（72dpi or 300dpi）基準で異なる場合あり
+// → 実データ確認後に換算レートを調整すること
+//
+// 代表的な換算レート：
+//   Canva → 96dpi
+//   印刷用 → 300dpi
+//   Figma → 72dpi
+//   Illustrator → 72 または 300dpi
+/// 基準dpi
+/// @type Number
+/// @example scss - 例
+///   $default-dpi: 96; // Canva想定
+///
+$default-dpi: 96;
