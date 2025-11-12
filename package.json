@@ -7,7 +7,8 @@
   "sass": "scss/_index.scss",
   "exports": {
     ".": "./scss/_index.scss",
-    "./functions": "./scss/global/functions/_index.scss"
+    "./functions": "./scss/global/functions/_index.scss",
+    "./setting": "./scss/global/setting/_index.scss"
   },
   "repository": {
     "type": "git",

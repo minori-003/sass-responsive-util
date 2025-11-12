@@ -9,15 +9,15 @@
 
 /// ディスプレイ最小幅 (px)
 /// @type Number
-$default-min-bp: 375;
+$default-min-bp: 375 !default;
 
 /// ディスプレイ最大幅 (px)
 /// @type Number
-$default-max-bp: 1440;
+$default-max-bp: 1440 !default;
 
 /// 基準font-size (px)
 /// @type Number
-$root-font-size: 16;
+$root-font-size: 16 !default;
 
 // ↓ ここから個別変数の説明
 // ポイントからピクセルに変換する際の基準値はここで調整する
@@ -36,4 +36,4 @@ $root-font-size: 16;
 /// @example scss - 例
 ///   $default-dpi: 96; // Canva想定
 ///
-$default-dpi: 96;
+$default-dpi: 96 !default;
