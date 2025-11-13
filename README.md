@@ -68,6 +68,21 @@ sass-responsive-util/
 
 ## 📘 Usage / 使用方法
 
+### Precautions / 注意事項
+> **Note for Sass CLI users:** If you are compiling directly with the Sass CLI, you may need to add the `--load-path=node_modules` option to your command to help the compiler find the package.
+> 
+> **Sass CLIをお使いの方へ:** コマンドラインで直接コンパイルする場合、`--load-path=node_modules` オプションを追加して、コンパイラがパッケージを見つけられるようにする必要がある場合があります。
+>
+> ```bash
+> npx sass <your-input-file>.scss <your-output-file>.css --load-path=node_modules
+> ```
+> **Note:** If you're using build tools like Vite, Webpack, or Gulp,
+> you can set `includePaths: ["node_modules"]` in your Sass configuration instead.
+>
+> **補足:** Vite・Webpack・Gulpなどを使用している場合は、
+> Sass設定で `includePaths: ["node_modules"]` を追加することで同様の動作になります。
+
+
 ### 1️⃣ Customize settings (recommended)
 
 ```scss
