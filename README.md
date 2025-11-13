@@ -47,23 +47,21 @@ sass-responsive-util/
 ├ package.json
 ├ README.md
 ├ LICENSE
-├ _index.scss                 # Entry point
+├ _index.scss              # Entry point
 │
-└ global/
-   ├ _index.scss              # Entry point
-   │
-   ├ setting/
-   │   ├ _index.scss          # Entry point
-   │   └ _variables.scss      # Global variables
-   │
-   └ functions/
-       ├ _index.scss          # Entry point
-       ├ _unit-helpers.scss
-       ├ _px-conversions.scss
-       ├ _pt-conversions.scss
-       ├ _viewport-conversions.scss
-       ├ _local-conversions.scss
-       └ _fluid-type.scss
+├ setting/
+│   ├ _index.scss          # Entry point
+│   └ _variables.scss      # Global variables
+│
+└ functions/
+    ├ _index.scss          # Entry point
+    ├ _unit-helpers.scss
+    ├ _px-conversions.scss
+    ├ _pt-conversions.scss
+    ├ _viewport-conversions.scss
+    ├ _local-conversions.scss
+    └ _fluid-type.scss
+
 ```
 
 ## 📘 Usage / 使用方法
