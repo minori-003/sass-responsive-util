@@ -1,13 +1,13 @@
 {
   "name": "sass-responsive-util",
   "version": "1.0.0",
-  "description": "A Sass utility library for DPI-based responsive scaling. Supports px, pt, rem, em, %, and clamp().",
-  "main": "scss/_index.scss",
-  "sass": "scss/_index.scss",
+  "description": "A modern Sass utility library for DPI-aware responsive design. Easily convert between px, pt, rem, vw, and clamp() with scalable typography support.",
+  "main": "_index.scss",
+  "sass": "_index.scss",
   "exports": {
-    ".": "./sass-responsive-util/_index.scss",
-    "./functions": "./sass-responsive-util/global/functions/_index.scss",
-    "./setting": "./sass-responsive-util/global/setting/_index.scss"
+    ".": "./_index.scss",
+    "./functions": "./global/functions/_index.scss",
+    "./setting": "./global/setting/_index.scss"
   },
   "repository": {
     "type": "git",
@@ -20,20 +20,36 @@
   "keywords": [
     "sass",
     "scss",
-    "responsive",
+    "responsive-design",
     "clamp",
+    "dpi",
     "pt",
+    "rem",
+    "vw",
     "em",
     "percent",
-    "dpi",
+    "fluid-typography",
     "frontend",
+    "sass-library",
+    "design-system",
     "utility"
   ],
-  "author": "Minori Koishi",
+  "author": {
+    "name": "Minori Koishi",
+    "email": "",
+    "url": "https://github.com/minori-003"
+  },
   "license": "MIT",
   "files": [
-    "scss",
+    "_index.scss",
+    "global/",
     "README.md",
     "LICENSE"
-  ]
+  ],
+  "engines": {
+    "sass": ">=1.56.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }
