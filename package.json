@@ -7,7 +7,8 @@
   "exports": {
     ".": "./_index.scss",
     "./functions": "./functions/_index.scss",
-    "./setting": "./setting/_index.scss"
+    "./setting": "./setting/_index.scss",
+    "./mixin": "./mixin/_index.scss"
   },
   "repository": {
     "type": "git",
@@ -44,6 +45,7 @@
   "_index.scss",
   "functions/**/*.scss",
   "setting/**/*.scss",
+  "mixin/**/*.scss",
   "README.md",
   "LICENSE"
   ],

@@ -40,6 +40,13 @@
   @return uh.remove-unit($value);
 }
 
+/// px/pt/単位なしの値を単位なしのpx値に変換する関数
+/// @param {Number} $value - 変換対象の値（px, pt, または単位なし）
+/// @return {Number} 単位なしpx値
+@function to-px-value($value) {
+  @return _to-px-value($value);
+}
+
 
 // ===================================================================
 // 比率変換

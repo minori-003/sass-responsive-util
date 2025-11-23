@@ -1,0 +1,26 @@
+@use "sass:math";
+@use "../functions" as fn;
+
+@mixin font-space-block($space-size, $font-size: 1em) {
+  // 判定用フラグを先に定義（コードが見やすくなります）
+  $is-font-static: math.unit($font-size) == "px" or math.unit($font-size) == "pt" or math.is-unitless($font-size);
+  $is-space-static: math.unit($space-size) == "px" or math.unit($space-size) == "pt" or math.is-unitless($space-size);
+
+  // 1. フォントも余白も「静的（px/pt/単位なし）」なら、Sassで計算して数値を出す
+  @if $is-font-static and $is-space-static {
+    line-height: fn.font-space-block($space-size, $font-size);
+  }
+  // 2. どちらかが動的（em/rem等）なら calc() を出力する
+  @else {
+    // 余白だけが静的（ptなど）の場合は、pxに変換して calc に埋め込む
+    @if $is-space-static {
+      $space-size-px: fn.to-px-value($space-size);
+      line-height: calc((#{$font-size} + #{$space-size-px * 2}px) / #{$font-size});
+    }
+    // 余白も動的（em/rem/%など）の場合は、そのまま calc に埋め込む
+    @else {
+      // #{$space-size * 2} は、例えば 0.5em * 2 = 1em のように単位付きで展開されます
+      line-height: calc((#{$font-size} + #{$space-size * 2}) / #{$font-size});
+    }
+  }
+}

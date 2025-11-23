@@ -53,15 +53,19 @@ sass-responsive-util/
 │   ├ _index.scss          # Entry point
 │   └ _variables.scss      # Global variables
 │
-└ functions/
-    ├ _index.scss          # Entry point
-    ├ _unit-helpers.scss
-    ├ _px-conversions.scss
-    ├ _pt-conversions.scss
-    ├ _viewport-conversions.scss
-    ├ _local-conversions.scss
-    └ _fluid-type.scss
-
+├ functions/
+│   ├ _index.scss          # Entry point
+│   ├ _unit-helpers.scss
+│   ├ _px-conversions.scss
+│   ├ _pt-conversions.scss
+│   ├ _viewport-conversions.scss
+│   ├ _local-conversions.scss
+│   └ _fluid-type.scss
+│
+└ mixin/
+   ├ _index.scss          # Entry point
+   ├ _font-space-block.scss
+   └ _font-space-line.scss
 ```
 
 ## 📘 Usage / 使用方法
@@ -122,6 +126,21 @@ sass-responsive-util/
 | `to-em()` | 相対サイズを`em`に変換 | `padding-top: to-em(24px, 16px);` | `padding-top: 1.5em;` |
 | `px-to-vw-sp()` | スマホ用`vw`を生成 | `width: px-to-vw-sp(300);` | `width: 80vw;` |
 
+## 🎨 Mixin Examples / Mixin使用例
+
+```scss
+@use "sass-responsive-util/mixin" as mixin;
+.text {
+  @include mixin.font-space-block(8px, 16px);
+  // => line-height: 2;
+}
+
+.heading {
+  @include mixin.font-space-line(0.5em, 1.5em);
+  // => letter-spacing: calc((0.5em / 1.5em) * 1em);
+}
+```
+
 ## ⚙️ Variables / 設定変数
 
 | 変数名 | デフォルト値 | 説明 |
@@ -147,7 +166,7 @@ sass-responsive-util/
 
 ## 📒 API Reference
 
-| 関数名 | 説明 |
+| 関数名、mixin名 | 説明 |
 | --- | --- |
 | `px-to-rem($px, $baseFontSize: $root-font-size)` | pxをremに変換します。|
 | `pt-to-px($pt)` | ptをpxに変換します。 |
@@ -158,6 +177,8 @@ sass-responsive-util/
 | `pt-to-vw-sp($pt, $minViewport: $default-min-bp)` | pt値をvw値に変換。 |
 | `to-em($target-size, $context-size)` | 相対サイズをemに変換。 |
 | `to-percent($target-size, $context-size)` | 相対サイズを%に変換。 |
+| `@mixin font-space-block` | 文字の上下につけたい余白からline-heightを算出する |
+| `@mixin font-space-line` | 文字の横につけたい余白からletter-spacingをemで算出する |
 
 ## 🧠 Quick Example
 
@@ -167,7 +188,7 @@ sass-responsive-util/
 .title {
   font-size: sru.px-to-rem(24);
   margin-top: sru.pt-to-px(12pt);
-  line-height: sru.r-clamp(20, 32);
+  @include sru.font-space-block(8px, 16px);
 }
 ```
 
