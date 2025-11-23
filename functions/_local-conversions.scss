@@ -6,7 +6,6 @@
 /// - pt値にも対応しており、CanvaやIllustratorなどの異なるDPI環境でも正確な変換が可能です。
 
 @use "sass:math";
-@use "sass:meta";
 @use "../setting" as var;
 @use "unit-helpers" as uh;
 @use "pt-conversions" as pt;
@@ -18,16 +17,50 @@
 /// 任意の値を単位なしのpx値に変換する内部ヘルパー関数。
 /// pt単位は自動的にpx換算されます。
 /// @access private
-/// @param {Number} $value - 変換対象の値（px, pt, または単位なし）
+/// @param {Number} $value - 変換対象の値
 /// @return {Number} 単位なしpx値
-/// @access private
 @function _to-px-value($value) {
-  // 単位が 'pt' の場合は、pt-to-px-value関数で変換
+  // 無単位 → そのまま返す
+  @if math.is-unitless($value) {
+    @return $value;
+  }
+
+  // pt → px 変換
   @if math.unit($value) == "pt" {
     @return pt.pt-to-px-value($value);
   }
-  // それ以外（pxや単位なし）の場合は、remove-unitで単位を除去
+
+  // px → 単位除去
+  @if math.unit($value) == "px" {
+    @return uh.remove-unit($value);
+  }
+
+  // それ以外の単位 → 警告を出して単位除去
+  @warn "Unit #{math.unit($value)} is not supported for px conversion. Removing unit.";
   @return uh.remove-unit($value);
+}
+
+
+// ===================================================================
+// 比率変換
+// ===================================================================
+
+/// 2つの値の比率（単位なしの数値）を求める関数
+/// ptを使用する場合は、単位(pt)をつけてください。
+/// 単位がない若しくは単位がpx場合は、pxとして処理します。
+/// @param {Number} $molecule-size - 分子となるサイズ (例: 16px, 12pt)
+/// @param {Number} $denominator-size - 分母となるサイズ (例: 20px, 16pt)
+/// @return {Number} 単位なしの比率
+@function to-ratio($molecule-size, $denominator-size, $warning-context: "ratio conversion"){
+  // ヘルパー関数を使って、両方の引数を単位なしのpx値に変換
+  $molecule-px: _to-px-value($molecule-size);
+  $denominator-px: _to-px-value($denominator-size);
+  // ゼロ除算を防止する安全装置
+  @if $denominator-px == 0 {
+    @warn "Denominator size cannot be 0 for #{$warning-context}.";
+    @return 0;
+  }
+  @return math.div($molecule-px, $denominator-px);
 }
 
 // ===================================================================
@@ -45,18 +78,9 @@
 /// @param {Number} $target-size - 変換したいターゲットのサイズ (例: 16px, 12pt)
 /// @param {Number} $context-size - 基準となる親要素のフォントサイズ (例: 20px, 16pt)
 /// @return {Number} em単位の値
-@function to-em($target-size, $context-size) {
-  // ヘルパー関数を使って、両方の引数を単位なしのpx値に変換
-  $target-px: _to-px-value($target-size);
-  $context-px: _to-px-value($context-size);
-
-  // ゼロ除算を防止する安全装置
-  @if $context-px == 0 {
-    @warn "Context font size cannot be 0 for em conversion.";
-    @return 0em;
-  }
-
-  @return math.div($target-px, $context-px) * 1em;
+@function to-em($target-size, $context-size, $warning-context: "em conversion") {
+  // 警告メッセージを "em conversion" に設定して to-ratio を呼び出す
+  @return to-ratio($target-size, $context-size, $warning-context) * 1em;
 }
 
 // ===================================================================
@@ -75,16 +99,42 @@
 /// @param {Number} $target-size - 変換したいターゲットのサイズ (例: 16px, 12pt)
 /// @param {Number} $context-size - 基準となる親要素のサイズ (例: 20px, 16pt)
 /// @return {Number} %単位の値
-@function to-percent($target-size, $context-size){
-	// ヘルパー関数を使って、両方の引数を単位なしのpx値に変換
-	$target-px: _to-px-value($target-size);
-  $context-px: _to-px-value($context-size);
+@function to-percent($target-size, $context-size, $warning-context: "percent conversion"){
+  // 警告メッセージを "percent conversion" に設定して to-ratio を呼び出す
+  @return to-ratio($target-size, $context-size, $warning-context) * 100%;
+}
 
-  // ゼロ除算を防止する安全装置
-  @if $context-px == 0 {
-    @warn "Context font size cannot be 0 for % conversion.";
-    @return 0%;
-  }
+// ===================================================================
+// フォント関係の設定
+// ===================================================================
 
-  @return math.div($target-px, $context-px) * 100%;
+/// 上下の余白サイズから line-height を算出する関数
+/// @param {Number} $space-size - 上（または下）に確保したい余白サイズ (例: 10px, 8pt)
+/// @param {Number} $context-size - フォントサイズ (例: 16px)
+/// @return {Number} 単位なしの line-height 値
+@function font-space-block($space-size, $context-size: var.$root-font-size){
+  // 1. 事前に数値を単位なしpx値に揃える
+  $space-val: _to-px-value($space-size);
+  $context-val: _to-px-value($context-size);
+
+  // 2. 分子（行の高さ全体 = フォントサイズ + 上下の余白）を計算
+  $line-height-total: ($space-val * 2) + $context-val;
+
+  // 3. 比率を算出（to-ratioにお任せ）
+  // 第3引数にエラー時のコンテキストを渡しておくとデバッグしやすくなります
+  @return to-ratio($line-height-total, $context-val, "font-space-block (line-height)");
+}
+
+/// 文字の間隔から letter-spacing を算出する関数
+/// @param {Number} $space-size - 横に確保したい余白サイズ (例: 10px, 8pt)
+/// @param {Number} $context-size - フォントサイズ (例: 16px)
+/// @return {Number} em単位の letter-spacing 値
+@function font-space-line($space-size, $context-size: var.$root-font-size){
+  // 1. 事前に数値を単位なしpx値に揃える
+  $space-val: _to-px-value($space-size);
+  $context-val: _to-px-value($context-size);
+
+  // 2. 比率を算出（to-emにお任せ）
+  // 第3引数にエラー時のコンテキストを渡しておくとデバッグしやすくなります
+  @return to-em($space-val, $context-val, "font-space-line (letter-spacing)");
 }
