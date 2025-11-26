@@ -1,6 +1,12 @@
 
 @use "apply-r-clamp" as arc;
 
+/// widthにr-clampを適用するmixin
+/// @param $min - 最小値
+/// @param $max - 最大値
+/// @example
+/// @include width-size-r-clamp(16px, 32px);
+/// // => width: clamp(1rem, calc(0.85rem + 0.52vw), 2rem);
 @mixin width-size-r-clamp($min, $max) {
   @include arc.apply-r-clamp("width", $min, $max);
 }

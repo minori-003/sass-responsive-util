@@ -2,6 +2,13 @@
 @use "sass:meta";
 @use "../functions" as fn;
 
+/// r-clampを適用するmixin
+/// @param $property - 対象のCSSプロパティ
+/// @param $min - 最小値
+/// @param $max - 最大値
+/// @example
+/// @include apply-r-clamp("font-size", 16px, 32px);
+/// // => font-size: clamp(1rem, calc(0.85rem + 0.52vw), 2rem);
 @mixin apply-r-clamp($property, $min, $max) {
   $is-min-number: meta.type-of($min) == "number";
   $is-max-number: meta.type-of($max) == "number";
