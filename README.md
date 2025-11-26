@@ -65,7 +65,10 @@ sass-responsive-util/
 └ mixin/
    ├ _index.scss          # Entry point
    ├ _font-space-block.scss
-   └ _font-space-line.scss
+   ├ _font-space-line.scss
+   ├ _apply-r-clamp.scss
+   ├ _font-size-r-clamp.scss
+   └ _width-size-r-clamp.scss
 ```
 
 ## 📘 Usage / 使用方法
