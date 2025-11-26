@@ -116,7 +116,7 @@
 // ===================================================================
 
 /// 上下の余白サイズから line-height を算出する関数
-/// @param {Number} $space-size - 上（または下）に確保したい余白サイズ (例: 10px, 8pt)
+/// @param {Number} $space-size - 上下に確保したい余白サイズ (例: 10px, 8pt)
 /// @param {Number} $context-size - フォントサイズ (例: 16px)
 /// @return {Number} 単位なしの line-height 値
 @function font-space-block($space-size, $context-size: var.$root-font-size){

@@ -10,6 +10,7 @@
 @use "unit-helpers" as uh;
 @use "px-conversions" as px;
 @use "pt-conversions" as pt;
+@use "rem-conversions" as rem;
 
 
 // ===================================================================
@@ -44,7 +45,7 @@
   $minRem: math.div($min, $baseFontSize);  // 最小値をremに変換
   $maxRem: math.div($max, $baseFontSize);  // 最大値をremに変換
   $baseOffsetRem: math.div($baseOffset, $baseFontSize);  // オフセットをremに変換
-  $vwScaleRem: $vwScale * 100;  // vwスケールを調整
+  $vwScaleRem: uh.round-dec($vwScale * 100);  // vwスケールを調整
 
   @return clamp(#{$minRem}rem, calc(#{$baseOffsetRem}rem + #{$vwScaleRem}vw), #{$maxRem}rem);
 }
@@ -73,6 +74,33 @@
   // ptをpxに変換
   $minPx: pt.pt-to-px-value($minPt);
   $maxPx: pt.pt-to-px-value($maxPt);
+
+  // 既存のr-clamp関数を呼び出す
+  @return r-clamp($minPx, $maxPx, $minViewport, $maxViewport, $baseFontSize);
+}
+
+// ===================================================================
+// r-clamp-rem
+// ===================================================================
+
+/// ビューポート幅に応じてサイズが変化するrem対応clamp式を生成します。
+/// `$root-font-size` を基準に自動換算されます。
+///
+/// @example scss - 例
+///   r-clamp-rem(1rem, 2rem);
+///   // => clamp(1rem, calc(...), 2rem)
+///
+/// remに対応した対象のサイズが画面幅に応じて変化するCSSのclamp()関数を生成します。
+/// @param {number} $minRem - 最小rem値
+/// @param {number} $maxRem - 最大rem値
+/// @param {number} $minViewport [optional] - 可変を開始するビューポートの最小幅 (デフォルト: $default-min-bp)
+/// @param {number} $maxViewport [optional] - 可変を終了するビューポートの最大幅 (デフォルト: $default-max-bp)
+/// @param {number} $baseFontSize [optional] - rem計算の基準となるフォントサイズ (デフォルト: $root-font-size)
+/// @return {string} rem単位を基準とした clamp(min, preferred, max) のCSS文字列
+@function r-clamp-rem($minRem, $maxRem, $minViewport: var.$default-min-bp, $maxViewport: var.$default-max-bp, $baseFontSize: var.$root-font-size) {
+  // remをpxに変換
+  $minPx: rem.rem-to-px-value($minRem, $baseFontSize);
+  $maxPx: rem.rem-to-px-value($maxRem, $baseFontSize);
 
   // 既存のr-clamp関数を呼び出す
   @return r-clamp($minPx, $maxPx, $minViewport, $maxViewport, $baseFontSize);

@@ -1,0 +1,50 @@
+/// @ _rem-conversions.scss
+/// @group Conversions
+/// @description
+/// rem → px に関する変換関数群
+/// 対応font-sizeは $root-font-size（_variables.scss）で管理。
+
+@use "sass:math";
+@use "../setting" as var;
+@use "unit-helpers" as uh;
+@use "pt-conversions" as pt;
+
+
+
+/// remを単位なしpxに変換する関数
+/// @param {number} $rem - レム値
+/// @param {number} $baseFontSize - 基準フォントサイズ（デフォルト$root-font-size）
+/// @return {number} 単位なしのpx値
+@function rem-to-px-value($rem, $baseFontSize: var.$root-font-size){
+	// 入力された数値に単位(px)が付いていた場合でも、remove-unit関数で安全に処理する
+	$rem: uh.remove-unit($rem);
+	$baseFontSize: uh.remove-unit($baseFontSize);
+	$px: $rem * $baseFontSize;
+	@return $px ;
+}
+
+/// remをpxに変換する関数
+/// @param {number} $rem - レム値
+/// @param {number} $baseFontSize - 基準フォントサイズ（デフォルト$root-font-size）
+/// @return {number} px値
+@function rem-to-px($rem, $baseFontSize: var.$root-font-size){
+	@return rem-to-px-value($rem, $baseFontSize) * 1px;
+}
+
+/// remを単位なしptに変換する関数
+/// @param {number} $rem - レム値
+/// @param {number} $baseFontSize - 基準フォントサイズ（デフォルト$root-font-size）
+/// @return {number} 単位なしのpt値
+@function rem-to-pt-value($rem, $baseFontSize: var.$root-font-size){
+	$px: rem-to-px-value($rem, $baseFontSize);
+    $pt: math.div($px, pt.pt-to-px-rate());
+    @return $pt;
+}
+
+/// remをptに変換する関数
+/// @param {number} $rem - レム値
+/// @param {number} $baseFontSize - 基準フォントサイズ（デフォルト$root-font-size）
+/// @return {number} pt値
+@function rem-to-pt($rem, $baseFontSize: var.$root-font-size){
+    @return rem-to-pt-value($rem, $baseFontSize) * 1pt;
+}

@@ -1,0 +1,30 @@
+@use "sass:math";
+@use "sass:meta";
+@use "../functions" as fn;
+
+@mixin apply-r-clamp($property, $min, $max) {
+  $is-min-number: meta.type-of($min) == "number";
+  $is-max-number: meta.type-of($max) == "number";
+
+  @if not $is-min-number or not $is-max-number {
+    @warn "#{ $property }-r-clamp: Arguments must be numbers. Given: #{meta.inspect($min)}, #{meta.inspect($max)}";
+  } @else {
+    $min-unit: math.unit($min);
+    $max-unit: math.unit($max);
+
+    $is-static: ($min-unit == "px" or $min-unit == "") and ($max-unit == "px" or $max-unit == "");
+    $is-pt: $min-unit == "pt" and $max-unit == "pt";
+    $is-rem: $min-unit == "rem" and $max-unit == "rem";
+
+    @if $is-static {
+      #{$property}: fn.r-clamp($min, $max);
+    } @else if $is-pt {
+      #{$property}: fn.r-clamp-pt($min, $max);
+    } @else if $is-rem {
+      #{$property}: fn.r-clamp-rem($min, $max);
+    } @else {
+      @warn "#{ $property }-r-clamp: Mixed units detected (#{$min-unit}, #{$max-unit}). Converting to px-based clamp.";
+      #{$property}: fn.r-clamp($min, $max);
+    }
+  }
+}

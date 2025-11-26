@@ -30,6 +30,7 @@
 @use "../setting" as var;
 @use "unit-helpers" as uh;
 @use "pt-conversions" as pt;
+@use "rem-conversions" as rem;
 
 
 // ==========================================================================
@@ -107,5 +108,34 @@
 ///
 @function pt-to-vw-pc($pt, $maxViewport: var.$default-max-bp) {
   $px: pt.pt-to-px-value($pt); // pt → px に変換
+  @return px-to-vw-pc($px, $maxViewport); // 既存のpx-to-vw-pc関数を呼び出す
+}
+
+// ==========================================================================
+// 公開関数（rem → vw）
+// ==========================================================================
+
+/// rem値をスマホサイズ用のvw単位に変換します。
+/// @param {number} $rem - rem値
+/// @param {number} $minViewport - 基準となる最小ビューポート幅（デフォルト：$default-min-bp）
+/// @return {number} - vw単位の値（sp用）
+/// @example scss
+///
+///
+@function rem-to-vw-sp($rem, $minViewport: var.$default-min-bp) {
+	$px: rem.rem-to-px-value($rem); // pt値をpx値に変換する
+  @return _px-to-vw($px, $minViewport);
+}
+
+/// pt値をPCサイズ用のvw単位に変換します。
+/// px値が負の場合は `max()` を、正の場合は `min()` を使用して安全に返却します。
+/// @param {number} $rem - pt値
+/// @param {number} $maxViewport - 基準となる最大ビューポート幅（デフォルト：$default-max-bp）
+/// @return {number} - vw単位の値（pc用）
+/// @example scss
+///
+///
+@function rem-to-vw-pc($rem, $maxViewport: var.$default-max-bp) {
+  $px: rem.rem-to-px-value($rem); // rem → px に変換
   @return px-to-vw-pc($px, $maxViewport); // 既存のpx-to-vw-pc関数を呼び出す
 }

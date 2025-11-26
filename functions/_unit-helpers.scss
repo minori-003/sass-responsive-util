@@ -4,13 +4,34 @@
 /// 単位(px, ptなど)を安全に除去して純粋な数値を返すユーティリティ関数。
 /// Sassの演算では異なる単位を直接計算できないため、内部計算で利用します。
 @use "sass:math";
+@use "sass:meta";
 
 /// 任意の単位を除去し、純粋な数値を返す関数
 /// @param {number} $value - 単位付きまたは単位なしの数値
 /// @return {number} 単位なしの値
 @function remove-unit($value) {
-  @if not math.is-unitless($value) {
-    @return math.div($value, $value * 0 + 1);
+  @if math.is-unitless($value) {
+    @return $value;
   }
-  @return $value;
+  $denominator: 1 + ($value * 0); // 単位付きの "1"
+  @return math.div($value, $denominator);
+}
+
+/// ヘルパー：値が「計算可能な数値（px, pt, 単位なし）」かどうかを判定
+/// @param {number} $value - 単位付きまたは単位なしの数値
+/// @return {boolean} 計算可能な数値かどうか
+@function is-absolute-length($value) {
+  // そもそも数値でなければ false
+  @if meta.type-of($value) != "number" {
+    @return false;
+  }
+  // 単位を確認
+  $unit: math.unit($value);
+  @return $unit == "px" or $unit == "pt" or math.is-unitless($value);
+}
+
+// 小数点以下の桁が長くなりすぎない様にする
+@function round-dec($number, $digits: 4) {
+  $n: math.pow(10, $digits);
+  @return math.div(math.round($number * $n), $n);
 }

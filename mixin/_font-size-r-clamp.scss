@@ -1,0 +1,5 @@
+@use "apply-r-clamp" as arc;
+
+@mixin font-size-r-clamp($min, $max) {
+  @include arc.apply-r-clamp("font-size", $min, $max);
+}

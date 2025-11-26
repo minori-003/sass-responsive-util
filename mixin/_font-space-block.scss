@@ -1,27 +1,34 @@
 @use "sass:math";
+@use "sass:meta";
 @use "../functions" as fn;
 
+// mixin
 
-@mixin font-space-block($space-size, $font-size: 1em) {
-  // 判定用フラグを先に定義（コードが見やすくなります）
-  $is-font-static: math.unit($font-size) == "px" or math.unit($font-size) == "pt" or math.is-unitless($font-size);
-  $is-space-static: math.unit($space-size) == "px" or math.unit($space-size) == "pt" or math.is-unitless($space-size);
+@mixin m-font-space-block($space-size, $font-size: 1em) {
+	// 判定用フラグを先に定義（コードが見やすくなります）
+	$is-font-static: fn.is-absolute-length($font-size);
+  $is-space-static: fn.is-absolute-length($space-size);
 
   // フォントも余白も「静的（px/pt/単位なし）」なら、Sassで計算して数値を出す
   @if $is-font-static and $is-space-static {
     line-height: fn.font-space-block($space-size, $font-size);
-  }
+  } 
   // どちらかが動的（em/rem等）なら calc() を出力する
   @else {
+    // 警告文
+	  @warn "Using calc() in line-height implies unit-based inheritance. Child elements will inherit the computed pixel value, not the ratio.";
+		// 注意: 単位付きの line-height は、子要素で再計算されずそのまま継承されます
     // space-size が固定(px/pt)なら、calc(1em + px)
     @if $is-space-static {
       $space-size-px: fn.to-px-value($space-size);
       line-height: calc(1em + #{($space-size-px * 2)}px);
     }
+
     // space-size が em/rem など動的
     @else {
       // 例: 0.1em → 上下で0.2em → line-height: calc(1em + 0.2em)
-      line-height: calc(1em + (#{$space-size} * 2));
+      line-height: calc(1em + (#{ $space-size } * 2));
     }
   }
 }
+
