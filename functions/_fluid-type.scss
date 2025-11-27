@@ -20,6 +20,7 @@
 /// ビューポート幅に応じてサイズが変化するpx対応のclamp式を生成します。
 /// `$root-font-size` を基準にpxがremに自動換算されます。
 ///
+/// 正の値、負の値、および「画面が広がるにつれて小さくなる値」すべてに対応します。
 /// @example scss - 例
 ///   r-clamp-rem(16px, 32px);
 ///   // => clamp(1rem, calc(...), 2rem)
@@ -32,22 +33,31 @@
 /// @param {number} $baseFontSize [optional] - rem計算の基準となるフォントサイズ (デフォルト: $root-font-size)
 /// @return {string} rem単位を基準とした clamp(min, preferred, max) のCSS文字列
 @function r-clamp($min, $max, $minViewport: var.$default-min-bp, $maxViewport: var.$default-max-bp, $baseFontSize: var.$root-font-size) {
-	// 入力された数値に単位(px)が付いていた場合でも、remove-unit関数で安全に処理する
+	// 1.入力された数値に単位(px)が付いていた場合でも、remove-unit関数で安全に処理する
 	$min: uh.remove-unit($min);
 	$max: uh.remove-unit($max);
 	$minViewport: uh.remove-unit($minViewport);
 	$maxViewport: uh.remove-unit($maxViewport);
 	$baseFontSize: uh.remove-unit($baseFontSize);
 
+  // 2. 傾きと切片の計算 (ここは入力された順序通りに計算する必要があります)
+  //    例: -11px(スマホ) から -20px(PC) へ推移する場合
   $vwScale: math.div(($max - $min), ($maxViewport - $minViewport));  //　vw単位でのスケールを計算
   $baseOffset: $min - $minViewport * $vwScale;  // 基準となる最小値からのオフセットを計算
 
+  // 3. rem変換とvw変換
   $minRem: math.div($min, $baseFontSize);  // 最小値をremに変換
   $maxRem: math.div($max, $baseFontSize);  // 最大値をremに変換
   $baseOffsetRem: math.div($baseOffset, $baseFontSize);  // オフセットをremに変換
   $vwScaleRem: uh.round-dec($vwScale * 100);  // vwスケールを調整
 
-  @return clamp(#{$minRem}rem, calc(#{$baseOffsetRem}rem + #{$vwScaleRem}vw), #{$maxRem}rem);
+  // 4. clamp関数の境界値(MIN, MAX)を決定
+  //    CSSのclampは必ず (小さい数, calc, 大きい数) の順でなければならないため、
+  //    入力値の大小を比較してソートします。
+  $clampMin: if($minRem < $maxRem, $minRem, $maxRem); // 小さい方を採用
+  $clampMax: if($minRem > $maxRem, $minRem, $maxRem); // 大きい方を採用
+
+  @return clamp(#{$clampMin}rem, calc(#{$baseOffsetRem}rem + #{$vwScaleRem}vw), #{$clampMax}rem);
 }
 
 

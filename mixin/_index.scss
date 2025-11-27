@@ -1,3 +1,8 @@
+// ====================================================
+// sass-responsive-util/mixin/_index.scss
+// ----------------------------------------------------
+// sass-responsive-util/mixinフォルダ内の各ファイルを@forwardで読み込み
+// ====================================================
 @forward "font-space-block";
 @forward "font-space-line";
 @forward "apply-r-clamp";

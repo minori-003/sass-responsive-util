@@ -1,7 +1,7 @@
 /// @file _viewport-conversions.scss
 /// @group Conversions
 /// @description
-/// px / pt → vw-pc / vw-sp に関する変換関数群。
+/// px / pt / rem → vw-pc / vw-sp に関する変換関数群。
 /// - ディスプレイ幅に応じたレスポンシブなvw値を算出。
 /// - 対応ディスプレイサイズは `$default-min-bp` と `$default-max-bp`（_variables.scss）で管理。
 /// - pt変換では `$default-dpi` に基づいてpx換算を行う。
@@ -49,6 +49,8 @@
   @return math.div(uh.remove-unit($px), uh.remove-unit($viewport)) * 100vw;
 }
 
+
+
 // ==========================================================================
 // 公開関数（px → vw）
 // ==========================================================================
@@ -62,10 +64,9 @@
 ///
 @function px-to-vw-sp($px, $minViewport: var.$default-min-bp) {
   @return _px-to-vw($px, $minViewport);
-  }
+}
 
-/// px値をPCサイズ用のvw単位に変換します。
-/// px値が負の場合は `max()` を、正の場合は `min()` を使用して安全に返却します。
+/// px値をPCサイズ用のvw単位に変換します。（上限なし）
 /// @param {number} $px - ピクセル値
 /// @param {number} $maxViewport - 基準となる最大ビューポート幅（デフォルト：$default-max-bp）
 /// @return {number} - vw単位の値（pc用）
@@ -73,6 +74,18 @@
 ///   px-to-vw-pc(32); // => 2.2222vw（1440px基準）
 ///
 @function px-to-vw-pc($px, $maxViewport: var.$default-max-bp) {
+  @return _px-to-vw($px, $maxViewport);
+}
+
+/// px値を上限値を設けたPCサイズ用のvw単位に変換します。
+/// px値が負の場合は `max()` を、正の場合は `min()` を使用して安全に返却します。
+/// @param {number} $px - ピクセル値
+/// @param {number} $maxViewport - 基準となる最大ビューポート幅（デフォルト：$default-max-bp）
+/// @return {number} - vw単位の値（pc用）
+/// @example scss
+///   px-to-vw-pc-limited(32); // => 2.2222vw（1440px基準）
+///
+@function px-to-vw-pc-limited($px, $maxViewport: var.$default-max-bp) {
 	// 入力された数値に単位(px)が付いていた場合でも、remove-unit関数で安全に処理する
 	$px: uh.remove-unit($px);
   @if $px < 0 {
@@ -98,9 +111,8 @@
   @return _px-to-vw($px, $minViewport);
 }
 
-/// pt値をPCサイズ用のvw単位に変換します。
-/// px値が負の場合は `max()` を、正の場合は `min()` を使用して安全に返却します。
-/// @param {number} $pt - pt値
+/// pt値をPCサイズ用のvw単位に変換します。（上限なし）
+/// @param {number} $pt   - pt値
 /// @param {number} $maxViewport - 基準となる最大ビューポート幅（デフォルト：$default-max-bp）
 /// @return {number} - vw単位の値（pc用）
 /// @example scss
@@ -108,7 +120,20 @@
 ///
 @function pt-to-vw-pc($pt, $maxViewport: var.$default-max-bp) {
   $px: pt.pt-to-px-value($pt); // pt → px に変換
-  @return px-to-vw-pc($px, $maxViewport); // 既存のpx-to-vw-pc関数を呼び出す
+  @return _px-to-vw($px, $maxViewport);
+}
+
+/// pt値を上限値を設けたPCサイズ用のvw単位に変換します。
+/// px値が負の場合は `max()` を、正の場合は `min()` を使用して安全に返却します。
+/// @param {number} $pt - pt値
+/// @param {number} $maxViewport - 基準となる最大ビューポート幅（デフォルト：$default-max-bp）
+/// @return {number} - vw単位の値（pc用）
+/// @example scss
+///   pt-to-vw-pc-limited(16pt); // => 1.777vw（1440px基準）
+///
+@function pt-to-vw-pc-limited($pt, $maxViewport: var.$default-max-bp) {
+  $px: pt.pt-to-px-value($pt); // pt → px に変換
+  @return px-to-vw-pc-limited($px, $maxViewport); // 既存のpx-to-vw-pc関数を呼び出す
 }
 
 // ==========================================================================
@@ -127,15 +152,27 @@
   @return _px-to-vw($px, $minViewport);
 }
 
-/// pt値をPCサイズ用のvw単位に変換します。
+/// rem値をPCサイズ用のvw単位に変換します。（上限なし）
+/// @param {number} $rem   - rem値
+/// @param {number} $maxViewport - 基準となる最大ビューポート幅（デフォルト：$default-max-bp）
+/// @return {number} - vw単位の値（pc用）
+/// @example scss
+///   
+///
+@function rem-to-vw-pc($rem, $maxViewport: var.$default-max-bp) {
+  $px: rem.rem-to-px-value($rem); // rem → px に変換
+  @return _px-to-vw($px, $maxViewport);
+}
+
+/// rem値を上限値を設けたPCサイズ用のvw単位に変換します。
 /// px値が負の場合は `max()` を、正の場合は `min()` を使用して安全に返却します。
-/// @param {number} $rem - pt値
+/// @param {number} $rem - rem値
 /// @param {number} $maxViewport - 基準となる最大ビューポート幅（デフォルト：$default-max-bp）
 /// @return {number} - vw単位の値（pc用）
 /// @example scss
 ///
 ///
-@function rem-to-vw-pc($rem, $maxViewport: var.$default-max-bp) {
+@function rem-to-vw-pc-limited($rem, $maxViewport: var.$default-max-bp) {
   $px: rem.rem-to-px-value($rem); // rem → px に変換
-  @return px-to-vw-pc($px, $maxViewport); // 既存のpx-to-vw-pc関数を呼び出す
+  @return px-to-vw-pc-limited($px, $maxViewport); // 既存のpx-to-vw-pc関数を呼び出す
 }
