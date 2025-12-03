@@ -1,0 +1,49 @@
+/// @ _em-conversions.scss
+/// @group Conversions
+/// @description
+/// em → px に関する変換関数群
+
+@use "sass:math";
+@use "../setting" as var;
+@use "unit-helpers" as uh;
+@use "pt-conversions" as pt;
+
+
+
+/// emを単位なしpxに変換する関数
+/// @param {number} $em - em値
+/// @param {number} $contextFontSize - コンテキストフォントサイズ
+/// @return {number} 単位なしのpx値
+@function em-to-px-value($em, $contextFontSize){
+	// 入力された数値に単位(px)が付いていた場合でも、remove-unit関数で安全に処理する
+	$em: uh.remove-unit($em);
+	$contextFontSize: uh.remove-unit($contextFontSize);
+	$px: $em * $contextFontSize;
+	@return $px ;
+}
+
+/// emをpxに変換する関数
+/// @param {number} $em - em値
+/// @param {number} $contextFontSize - コンテキストフォントサイズ
+/// @return {number} px値
+@function em-to-px($em, $contextFontSize){
+	@return em-to-px-value($em, $contextFontSize) * 1px;
+}
+
+/// emを単位なしptに変換する関数
+/// @param {number} $em - em値
+/// @param {number} $contextFontSize - コンテキストフォントサイズ
+/// @return {number} 単位なしのpt値
+@function em-to-pt-value($em, $contextFontSize){
+	$px: em-to-px-value($em, $contextFontSize);
+    $pt: math.div($px, pt.pt-to-px-rate());
+    @return $pt;
+}
+
+/// emをptに変換する関数
+/// @param {number} $em - em値
+/// @param {number} $contextFontSize - コンテキストフォントサイズ
+/// @return {number} pt値
+@function em-to-pt($em, $contextFontSize){
+    @return em-to-pt-value($em, $contextFontSize) * 1pt;
+}

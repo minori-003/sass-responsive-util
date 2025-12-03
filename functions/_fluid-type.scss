@@ -11,6 +11,7 @@
 @use "px-conversions" as px;
 @use "pt-conversions" as pt;
 @use "rem-conversions" as rem;
+@use "em-conversions" as em;
 
 
 // ===================================================================
@@ -114,4 +115,35 @@
 
   // 既存のr-clamp関数を呼び出す
   @return r-clamp($minPx, $maxPx, $minViewport, $maxViewport, $baseFontSize);
+}
+
+// ===================================================================
+// r-clamp-em
+// ===================================================================
+
+/// ビューポート幅に応じてサイズが変化するem対応clamp式を生成します。
+/// `$root-font-size` を基準に自動換算されます。
+///
+/// @example scss - 例
+///   r-clamp-em(1em, 2em);
+///   // => clamp(1em, calc(...), 2em)
+///
+/// emに対応した対象のサイズが画面幅に応じて変化するCSSのclamp()関数を生成します。
+/// @param {number} $minEm - 最小em値
+/// @param {number} $maxEm - 最大em値
+/// @param {number} $minViewport [optional] - 可変を開始するビューポートの最小幅 (デフォルト: $default-min-bp)
+/// @param {number} $maxViewport [optional] - 可変を終了するビューポートの最大幅 (デフォルト: $default-max-bp)
+/// @param {number} $contextFontSize [optional] - em計算の基準となるフォントサイズ (デフォルト: null)
+/// @return {string} rem単位を基準とした clamp(min, preferred, max) のCSS文字列
+@function r-clamp-em($minEm, $maxEm, $minViewport: var.$default-min-bp, $maxViewport: var.$default-max-bp, $contextFontSize: null) {
+  // emをpxに変換
+  $minPx: em.em-to-px-value($minEm, $contextFontSize);
+  $maxPx: em.em-to-px-value($maxEm, $contextFontSize);
+
+  @if $contextFontSize != null {
+    // 既存のr-clamp関数を呼び出す
+    @return r-clamp($minPx, $maxPx, $minViewport, $maxViewport, $contextFontSize);
+  } @else {
+    @warn "contextFontSize is required for r-clamp-em";
+  }
 }

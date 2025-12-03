@@ -9,6 +9,7 @@
 /// @require variables
 /// @require remove-unit
 /// @require pt-conversions
+/// @require rem-conversions
 ///
 /// @example scss - 使用例
 ///   // スマホ画面(375px基準)で 20px をvw変換
@@ -50,6 +51,24 @@
 }
 
 
+/// px値を上限値を設けたPCサイズ用のvw単位に変換します。
+/// px値が負の場合は `max()` を、正の場合は `min()` を使用して安全に返却します。
+/// @param {number} $px - ピクセル値
+/// @param {number} $viewport - 基準となるビューポート幅
+/// @return {number} - vw単位の値（pc用）
+/// @example scss
+///   px-to-vw-pc-limited(32); // => 2.2222vw（1440px基準）
+///
+@function _px-to-vw-pc-limited($px, $viewport) {
+	// 入力された数値に単位(px)が付いていた場合でも、remove-unit関数で安全に処理する
+	$px: uh.remove-unit($px);
+  @if $px < 0 {
+    @return max($px * 1px, _px-to-vw($px, $viewport));
+  } @else {
+    @return min($px * 1px, _px-to-vw($px, $viewport));
+  }
+}
+
 
 // ==========================================================================
 // 公開関数（px → vw）
@@ -88,11 +107,7 @@
 @function px-to-vw-pc-limited($px, $maxViewport: var.$default-max-bp) {
 	// 入力された数値に単位(px)が付いていた場合でも、remove-unit関数で安全に処理する
 	$px: uh.remove-unit($px);
-  @if $px < 0 {
-    @return max($px * 1px, _px-to-vw($px, $maxViewport));
-  } @else {
-    @return min($px * 1px, _px-to-vw($px, $maxViewport));
-  }
+  @return _px-to-vw-pc-limited($px, $maxViewport);
 }
 
 // ==========================================================================
@@ -133,7 +148,7 @@
 ///
 @function pt-to-vw-pc-limited($pt, $maxViewport: var.$default-max-bp) {
   $px: pt.pt-to-px-value($pt); // pt → px に変換
-  @return px-to-vw-pc-limited($px, $maxViewport); // 既存のpx-to-vw-pc関数を呼び出す
+  @return _px-to-vw-pc-limited($px, $maxViewport); // 既存の_px-to-vw-pc-limited関数を呼び出す
 }
 
 // ==========================================================================
@@ -174,5 +189,5 @@
 ///
 @function rem-to-vw-pc-limited($rem, $maxViewport: var.$default-max-bp) {
   $px: rem.rem-to-px-value($rem); // rem → px に変換
-  @return px-to-vw-pc-limited($px, $maxViewport); // 既存のpx-to-vw-pc関数を呼び出す
+  @return _px-to-vw-pc-limited($px, $maxViewport); // 既存の_px-to-vw-pc-limited関数を呼び出す
 }
