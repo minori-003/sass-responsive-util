@@ -1,6 +1,6 @@
 {
   "name": "sass-responsive-util",
-  "version": "1.0.9",
+  "version": "2.0.0",
   "description": "A modern Sass utility library for DPI-aware responsive design. Easily convert between px, pt, rem, vw, and clamp() with scalable typography support.",
   "main": "_index.scss",
   "sass": "_index.scss",

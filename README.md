@@ -27,6 +27,17 @@
 
 ---
 
+## ⚠️ Breaking Changes in v2.0 / v2.0での破壊的変更
+
+> [!IMPORTANT]
+> **`px-to-vw-pc()` の挙動が変更されました**
+> - **v1.x**: デフォルトで上限付き（px値を上回らない）の値を返却していました。
+> - **v2.0**: **上限なし**（純粋なvw変換値）を返却するようになりました。
+> 
+> 以前の「上限付き」の挙動（PCで一定以上の幅になった際に固定する挙動）を維持したい場合は、新しく導入された **`px-to-vw-pc-limited()`** を使用してください。
+
+---
+
 ## 📦 Installation / インストール
 
 ### npm
@@ -120,16 +131,14 @@ sass-responsive-util/
 
 ## 💡 Example Functions / 使用例
 
-| 関数 | 目的 | SCSS例 | CSS出力例 |
-| --- | --- | --- | --- |
 | `px-to-rem()` | `px`を`rem`に変換 | `font-size: px-to-rem(24);` | `font-size: 1.5rem;` |
 | `rem-to-px()` | `rem`を`px`に変換 | `font-size: rem-to-px(1.5rem);` | `font-size: 24px;` |
-| `r-clamp()` | `px`に基づく`clamp()`生成 | `font-size: r-clamp(16, 32);` | `font-size: clamp(1rem, calc(0.85rem + 0.52vw), 2rem);` |
-| `r-clamp-pt()` | `pt`に基づく`clamp()`生成 | `font-size: r-clamp-pt(12pt, 24pt);` | `font-size: clamp(1rem, calc(0.85rem + 0.52vw), 2rem);` |
-| `r-clamp-rem()` | `rem`に基づく`clamp()`生成 | `font-size: r-clamp-rem(1rem, 2rem);` | `font-size: clamp(1rem, calc(0.85rem + 0.52vw), 2rem);` |
+| `r-clamp()` | `px`に基づく`clamp()`生成 | `font-size: r-clamp(16, 32);` | `font-size: clamp(1rem, ..., 2rem);` |
+| `px-to-vw-pc()` | PC用`vw`生成（上限なし） | `width: px-to-vw-pc(32);` | `width: 2.2222vw;` |
+| `px-to-vw-pc-limited()` | 上限付きPC用`vw`生成 | `width: px-to-vw-pc-limited(1200);` | `width: min(1200px, 83.3333vw);` |
+| `px-to-vw-sp()` | スマホ用`vw`を生成 | `width: px-to-vw-sp(300);` | `width: 80vw;` |
 | `pt-to-px()` | `pt`を`px`に変換 | `margin-top: pt-to-px(12pt);` | `margin-top: 16px;` |
 | `to-em()` | 相対サイズを`em`に変換 | `padding-top: to-em(24px, 16px);` | `padding-top: 1.5em;` |
-| `px-to-vw-sp()` | スマホ用`vw`を生成 | `width: px-to-vw-sp(300);` | `width: 80vw;` |
 
 ## 🎨 Mixin Examples / Mixin使用例
 
@@ -163,7 +172,7 @@ sass-responsive-util/
 | `$root-font-size` | `16` | `rem`変換の基準フォントサイズ |
 | `$default-min-bp` | `375` | 最小ビューポート幅（px） |
 | `$default-max-bp` | `1440` | 最大ビューポート幅（px） |
-| `$default-dpi` | `96` | `pt`から`px`への変換比率（1pt = $dpi / 72 px） |
+| `$default-dpi` | `96` | `pt`から`px`への変換比率（Web標準は96。デザイナーがCanvaやIllustrator（72dpi）を使用している場合は`72`に設定すると数値が一致します） |
 
 ### 例：設定変更
 
@@ -188,17 +197,26 @@ sass-responsive-util/
 | `pt-to-px($pt)` | ptをpxに変換します。 |
 | `pt-to-rem($pt, $baseFontSize: $root-font-size)` | ptをremに変換します。 |
 | `rem-to-pt($rem, $baseFontSize: $root-font-size)` | remをptに変換します。 |
-| `r-clamp($min, $max, $minViewport, $maxViewport, $baseFontSize)` | pxに基づくレスポンシブclamp()生成。 |
-| `r-clamp-pt($minPt, $maxPt, $minViewport, $maxViewport, $baseFontSize)` | ptに基づくレスポンシブclamp()生成。 |
-| `r-clamp-rem($minRem, $maxRem, $minViewport, $maxViewport, $baseFontSize)` | remに基づくレスポンシブclamp()生成。 |
-| `px-to-vw-sp($px, $minViewport: $default-min-bp)` | スマホ幅基準のvw値を生成。 |
-| `pt-to-vw-sp($pt, $minViewport: $default-min-bp)` | pt値をvw値に変換。 |
+| `r-clamp($min, $max, ...)` | pxに基づくレスポンシブclamp()生成。最小/最大値は自動でソートされます。 |
+| `r-clamp-pt($minPt, $maxPt, ...)` | ptに基づくレスポンシブclamp()生成。 |
+| `r-clamp-rem($minRem, $maxRem, ...)` | remに基づくレスポンシブclamp()生成。 |
+| `r-clamp-em($minEm, $maxEm, $minViewport, $maxViewport, $baseFontSize, $contextFontSize)` | emに基づくレスポンシブclamp()生成。 |
+| `px-to-vw-sp($px, ...)` | スマホ幅基準のvw値を生成。 |
+| `px-to-vw-pc($px, ...)` | PC幅基準のvw値を生成。 |
+| `px-to-vw-pc-limited($px, ...)` | 上限付きPC用vw値を生成（px値を上回らない）。 |
+| `pt-to-vw-sp($pt, ...)` | pt値をスマホ用のvw値に変換。 |
+| `pt-to-vw-pc($pt, ...)` | pt値をPC用のvw値に変換。 |
+| `pt-to-vw-pc-limited($pt, ...)` | pt値を上限付きPC用vw値に変換。 |
+| `rem-to-vw-sp($rem, ...)` | rem値をスマホ用のvw値に変換。 |
+| `rem-to-vw-pc($rem, ...)` | rem値をPC用のvw値に変換。 |
+| `rem-to-vw-pc-limited($rem, ...)` | rem値を上限付きPC用vw値に変換。 |
 | `to-em($target-size, $context-size)` | 相対サイズをemに変換。 |
 | `to-percent($target-size, $context-size)` | 相対サイズを%に変換。 |
-| `@mixin m-font-space-block` | 文字の上下につけたい余白からline-heightを算出する |
-| `@mixin m-font-space-line` | 文字の横につけたい余白からletter-spacingを算出する |
+| `@mixin apply-r-clamp($property, $min, $max)` | 任意のプロパティにr-clampを適用。単位(px, pt, rem)を自動判別します。 |
 | `@mixin font-size-r-clamp` | font-sizeにr-clampを適用するmixin |
 | `@mixin width-size-r-clamp` | widthにr-clampを適用するmixin |
+| `@mixin m-font-space-block` | 文字の上下につけたい余白からline-heightを算出する |
+| `@mixin m-font-space-line` | 文字の横につけたい余白からletter-spacingを算出する |
 
 ## 🧠 Quick Example
 
