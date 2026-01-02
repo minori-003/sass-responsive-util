@@ -55,8 +55,8 @@
   // 4. clamp関数の境界値(MIN, MAX)を決定
   //    CSSのclampは必ず (小さい数, calc, 大きい数) の順でなければならないため、
   //    入力値の大小を比較してソートします。
-  $clampMin: if($minRem < $maxRem, $minRem, $maxRem); // 小さい方を採用
-  $clampMax: if($minRem > $maxRem, $minRem, $maxRem); // 大きい方を採用
+  $clampMin: math.min($minRem, $maxRem); // 小さい方を採用
+  $clampMax: math.max($minRem, $maxRem); // 大きい方を採用
 
   @return clamp(#{$clampMin}rem, calc(#{$baseOffsetRem}rem + #{$vwScaleRem}vw), #{$clampMax}rem);
 }
